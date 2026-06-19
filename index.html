@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WJP 萬久平 · 製造營運儀表板</title>
+<style>
+  :root{
+    --ink:#333333; --ink-soft:#5b5b5b; --line:#e6e6e6; --bg:#f4f5f7; --card:#ffffff;
+    --orange:#f5821f; --orange-soft:#ffe9d4; --teal:#2c8c99; --grey:#9aa0a6; --green:#3aa76d; --red:#e0533d;
+    --shadow:0 1px 3px rgba(0,0,0,.08),0 6px 20px rgba(0,0,0,.04);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI","Microsoft JhengHei","PingFang TC",sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  /* Header */
+  header{background:var(--ink);color:#fff;padding:18px 28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+  .logo{display:flex;align-items:baseline;font-weight:800;font-size:34px;letter-spacing:1px;line-height:1}
+  .logo .w{color:#fff}.logo .j{color:var(--orange)}.logo .p{color:#fff}
+  .logo .reg{font-size:11px;vertical-align:super;color:var(--grey);margin-left:2px}
+  .brand-txt{display:flex;flex-direction:column}
+  .brand-txt .tag{font-size:11px;letter-spacing:3px;color:var(--orange);text-transform:uppercase}
+  .brand-txt .name{font-size:15px;color:#dcdcdc;margin-top:2px}
+  header .spacer{flex:1}
+  header .meta{font-size:12px;color:#b9b9b9;text-align:right}
+  header .meta b{color:#fff}
+  /* Tabs */
+  nav{background:var(--card);border-bottom:1px solid var(--line);padding:0 28px;display:flex;gap:4px;position:sticky;top:0;z-index:10;box-shadow:var(--shadow)}
+  nav button{background:none;border:none;padding:15px 18px;font-size:15px;color:var(--ink-soft);cursor:pointer;border-bottom:3px solid transparent;font-weight:600}
+  nav button:hover{color:var(--ink)}
+  nav button.active{color:var(--orange);border-bottom-color:var(--orange)}
+  main{padding:24px 28px;max-width:1280px;margin:0 auto}
+  .view{display:none}.view.active{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  h2.section{font-size:20px;margin-bottom:4px}
+  .sub{color:var(--ink-soft);font-size:13px;margin-bottom:18px}
+  .sub .pill{background:var(--orange-soft);color:#b85c00;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:600;margin-left:6px}
+  /* KPI */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:22px}
+  .kpi{background:var(--card);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);border-left:4px solid var(--orange)}
+  .kpi.alt{border-left-color:var(--teal)} .kpi.g{border-left-color:var(--green)} .kpi.r{border-left-color:var(--red)} .kpi.k{border-left-color:var(--grey)}
+  .kpi .label{font-size:13px;color:var(--ink-soft)}
+  .kpi .val{font-size:28px;font-weight:800;margin-top:4px}
+  .kpi .unit{font-size:13px;font-weight:600;color:var(--ink-soft);margin-left:3px}
+  /* Cards / charts */
+  .grid{display:grid;gap:18px;margin-bottom:18px}
+  .grid.two{grid-template-columns:1.6fr 1fr}
+  @media(max-width:900px){.grid.two{grid-template-columns:1fr}}
+  .card{background:var(--card);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
+  .card h3{font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .card h3 .dot{width:9px;height:9px;border-radius:50%;background:var(--orange)}
+  .chart{width:100%;overflow:visible}
+  .bar-row{cursor:default}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink-soft);margin-top:8px}
+  .legend span{display:inline-flex;align-items:center;gap:5px}
+  .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+  /* Table */
+  .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+  .toolbar input,.toolbar select{padding:8px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff}
+  .toolbar input[type=search]{min-width:200px}
+  .tbl-wrap{overflow:auto;max-height:460px;border:1px solid var(--line);border-radius:10px}
+  table{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap}
+  thead th{position:sticky;top:0;background:#fafafa;text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);font-weight:700;cursor:pointer;user-select:none}
+  thead th:hover{background:#f0f0f0}
+  tbody td{padding:9px 12px;border-bottom:1px solid #f0f0f0}
+  tbody tr:hover{background:#fff8f1}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .tag-ok{color:var(--green);font-weight:600}.tag-wait{color:var(--orange);font-weight:600}
+  .badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600}
+  .badge.ok{background:#e4f5ec;color:#1f7a4d}.badge.wait{background:#fff0e0;color:#b85c00}
+  .count-note{font-size:12px;color:var(--ink-soft);margin-top:8px}
+  footer{text-align:center;color:var(--grey);font-size:12px;padding:24px}
+  .note{background:#fffaf3;border:1px solid #f3dcbf;color:#8a5a14;border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:18px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><span class="w">W</span><span class="j">J</span><span class="p">P</span><span class="reg">&reg;</span></div>
+  <div class="brand-txt">
+    <span class="tag">Packaging for the World</span>
+    <span class="name">萬久平先進包裝股份有限公司</span>
+  </div>
+  <div class="spacer"></div>
+  <div class="meta">製造營運儀表板<br>資料來源：<b>ERP DEMO · 製造模組</b><br>匯出日 <b id="exp"></b></div>
+</header>
+
+<nav>
+  <button class="active" data-v="perf">📈 業績日報（生產產出）</button>
+  <button data-v="stock">📦 庫存／在製表</button>
+  <button data-v="incoming">🚚 進貨量（託外進貨）</button>
+</nav>
+
+<main>
+  <div class="note">
+    ⚠️ 本儀表板使用 ERP <b>製造模組（05）</b>實際資料製作。原始的「銷售 / 採購 / 庫存」Excel 不在資料夾中，故以製造資料對應呈現：
+    <b>業績日報＝生產入庫產出</b>、<b>庫存表＝製令在製(WIP)</b>、<b>進貨量＝託外進貨</b>。補上 01/02/04 檔即可切換為真實業績與庫存。
+  </div>
+
+  <!-- ===== 業績日報 ===== -->
+  <section class="view active" id="perf">
+    <h2 class="section">業績日報 · 生產產出</h2>
+    <div class="sub">以「生產入庫」記錄統計每日／每月產出量與良率<span class="pill">生產入庫 OQCTF + OQCTG</span></div>
+    <div class="kpis" id="perfKpis"></div>
+    <div class="grid two">
+      <div class="card"><h3><span class="dot"></span>月產出趨勢（入庫數量）</h3><div id="perfTrend"></div></div>
+      <div class="card"><h3><span class="dot"></span>產出 Top 10 品號</h3><div id="perfTop"></div></div>
+    </div>
+    <div class="card">
+      <h3><span class="dot"></span>生產入庫明細</h3>
+      <div class="toolbar">
+        <select id="perfMonth"></select>
+        <input type="search" id="perfSearch" placeholder="搜尋品號 / 品名 / 製令…">
+        <span class="count-note" id="perfCount"></span>
+      </div>
+      <div class="tbl-wrap"><table id="perfTbl"></table></div>
+    </div>
+  </section>
+
+  <!-- ===== 庫存／在製 ===== -->
+  <section class="view" id="stock">
+    <h2 class="section">庫存／在製表 · 製令 WIP</h2>
+    <div class="sub">依製令彙總「預計產量 vs 已生產量」，在製(WIP)＝預計−已產<span class="pill">製令 OQCTA</span></div>
+    <div class="kpis" id="stockKpis"></div>
+    <div class="grid two">
+      <div class="card"><h3><span class="dot"></span>品號別：預計 / 已產 / 在製（Top 10）</h3><div id="stockBars"></div>
+        <div class="legend"><span><i style="background:#9aa0a6"></i>預計產量</span><span><i style="background:#f5821f"></i>已生產</span><span><i style="background:#2c8c99"></i>在製 WIP</span></div>
+      </div>
+      <div class="card"><h3><span class="dot"></span>製令狀態分布</h3><div id="stockDonut"></div></div>
+    </div>
+    <div class="card">
+      <h3><span class="dot"></span>製令在製明細</h3>
+      <div class="toolbar">
+        <select id="stockStatus"><option value="">全部狀態</option><option value="open">僅在製(未完成)</option></select>
+        <input type="search" id="stockSearch" placeholder="搜尋製令 / 品號 / 品名…">
+        <span class="count-note" id="stockCount"></span>
+      </div>
+      <div class="tbl-wrap"><table id="stockTbl"></table></div>
+    </div>
+  </section>
+
+  <!-- ===== 進貨量 ===== -->
+  <section class="view" id="incoming">
+    <h2 class="section">進貨量 · 託外進貨</h2>
+    <div class="sub">委外加工進貨的數量、廠商與品號分布<span class="pill">託外進貨 OQCTH + OQCTI</span></div>
+    <div class="kpis" id="incKpis"></div>
+    <div class="grid two">
+      <div class="card"><h3><span class="dot"></span>依加工廠商進貨量</h3><div id="incVendor"></div></div>
+      <div class="card"><h3><span class="dot"></span>月進貨趨勢</h3><div id="incTrend"></div></div>
+    </div>
+    <div class="card">
+      <h3><span class="dot"></span>託外進貨明細</h3>
+      <div class="toolbar">
+        <input type="search" id="incSearch" placeholder="搜尋廠商 / 品號 / 品名…">
+        <span class="count-note" id="incCount"></span>
+      </div>
+      <div class="tbl-wrap"><table id="incTbl"></table></div>
+    </div>
+  </section>
+</main>
+
+<footer>萬久平先進包裝股份有限公司 · WJP Advanced Packaging — 製造營運儀表板（本地網頁，資料嵌入，無需連網）</footer>
+
+<script src="data.js"></script>
+<script>
+const D = window.ERP_DATA;
+const $ = s=>document.querySelector(s);
+const num = v=>{const n=parseFloat(String(v).replace(/,/g,''));return isNaN(n)?0:n;};
+const fmt = n=>Math.round(n).toLocaleString('en-US');
+const fmt1 = n=>n.toLocaleString('en-US',{maximumFractionDigits:1});
+const dlabel = d=> (d&&d.length===8)? d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8): (d||'—');
+const ym = d=> (d&&d.length>=6)? d.slice(0,4)+'-'+d.slice(4,6): '—';
+document.getElementById('exp').textContent = D.meta.exported;
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); document.getElementById(b.dataset.v).classList.add('active');
+});
+
+/* ---------- tiny SVG chart helpers ---------- */
+function barChart(el, data, opt={}){
+  // data: [{label, value}]
+  const w=opt.w||520, rowH=28, pad=4, max=Math.max(1,...data.map(d=>d.value));
+  const h=data.length*rowH+pad*2;
+  const lblW=opt.lblW||140, barW=w-lblW-70;
+  let s=`<svg viewBox="0 0 ${w} ${h}" class="chart">`;
+  data.forEach((d,i)=>{
+    const y=pad+i*rowH, bw=Math.max(1,d.value/max*barW);
+    s+=`<text x="${lblW-8}" y="${y+rowH/2}" text-anchor="end" dominant-baseline="middle" font-size="12" fill="#5b5b5b">${esc(d.label)}</text>`;
+    s+=`<rect x="${lblW}" y="${y+5}" width="${bw}" height="${rowH-12}" rx="3" fill="${opt.color||'#f5821f'}"></rect>`;
+    s+=`<text x="${lblW+bw+6}" y="${y+rowH/2}" dominant-baseline="middle" font-size="12" font-weight="600" fill="#333">${fmt(d.value)}</text>`;
+  });
+  s+=`</svg>`; el.innerHTML=s;
+}
+function groupedBars(el, data){
+  // data:[{label, plan, done, wip}]
+  const w=520, rowH=46, pad=6, lblW=130, barW=w-lblW-70;
+  const max=Math.max(1,...data.map(d=>d.plan));
+  const h=data.length*rowH+pad*2;
+  const cols=[['plan','#9aa0a6'],['done','#f5821f'],['wip','#2c8c99']];
+  let s=`<svg viewBox="0 0 ${w} ${h}" class="chart">`;
+  data.forEach((d,i)=>{
+    const y=pad+i*rowH;
+    s+=`<text x="${lblW-8}" y="${y+rowH/2}" text-anchor="end" dominant-baseline="middle" font-size="11.5" fill="#5b5b5b">${esc(d.label)}</text>`;
+    cols.forEach((c,j)=>{
+      const v=d[c[0]], yy=y+4+j*((rowH-8)/3), bw=Math.max(1,v/max*barW);
+      s+=`<rect x="${lblW}" y="${yy}" width="${bw}" height="${(rowH-8)/3-2}" rx="2" fill="${c[1]}"></rect>`;
+      s+=`<text x="${lblW+bw+5}" y="${yy+((rowH-8)/3-2)/2}" dominant-baseline="middle" font-size="10.5" fill="#333">${fmt(v)}</text>`;
+    });
+  });
+  s+=`</svg>`; el.innerHTML=s;
+}
+function lineChart(el, data, opt={}){
+  // data:[{label,value}]
+  const w=520,h=210,padL=46,padB=28,padT=12,padR=14;
+  const max=Math.max(1,...data.map(d=>d.value));
+  const iw=w-padL-padR, ih=h-padB-padT;
+  const n=data.length, step=n>1?iw/(n-1):0;
+  let pts=data.map((d,i)=>[padL+i*step, padT+ih-(d.value/max*ih)]);
+  let s=`<svg viewBox="0 0 ${w} ${h}" class="chart">`;
+  for(let g=0;g<=4;g++){const yy=padT+ih-g/4*ih;s+=`<line x1="${padL}" y1="${yy}" x2="${w-padR}" y2="${yy}" stroke="#eee"></line><text x="${padL-6}" y="${yy+3}" text-anchor="end" font-size="10" fill="#9aa0a6">${fmt(max*g/4)}</text>`;}
+  // area
+  s+=`<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#f5821f" stroke-width="2.5"></polyline>`;
+  pts.forEach((p,i)=>{ s+=`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#f5821f"></circle>`;
+    if(n<=14||i%Math.ceil(n/10)===0){ s+=`<text x="${p[0]}" y="${h-9}" text-anchor="middle" font-size="9.5" fill="#5b5b5b">${esc(data[i].label.slice(2))}</text>`;}
+  });
+  s+=`</svg>`; el.innerHTML=s;
+}
+function donut(el, parts){
+  // parts:[{label,value,color}]
+  const total=parts.reduce((a,b)=>a+b.value,0)||1; const cx=80,cy=80,r=60,rin=38;
+  let ang=-Math.PI/2,s=`<svg viewBox="0 0 320 170" class="chart">`;
+  parts.forEach(p=>{
+    const a2=ang+p.value/total*Math.PI*2;
+    const x1=cx+r*Math.cos(ang),y1=cy+r*Math.sin(ang),x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
+    const xi1=cx+rin*Math.cos(a2),yi1=cy+rin*Math.sin(a2),xi2=cx+rin*Math.cos(ang),yi2=cy+rin*Math.sin(ang);
+    const large=(a2-ang)>Math.PI?1:0;
+    s+=`<path d="M${x1},${y1} A${r},${r} 0 ${large} 1 ${x2},${y2} L${xi1},${yi1} A${rin},${rin} 0 ${large} 0 ${xi2},${yi2} Z" fill="${p.color}"></path>`;
+    ang=a2;
+  });
+  s+=`<text x="80" y="76" text-anchor="middle" font-size="22" font-weight="800" fill="#333">${fmt(total)}</text>`;
+  s+=`<text x="80" y="95" text-anchor="middle" font-size="11" fill="#9aa0a6">製令總數</text>`;
+  parts.forEach((p,i)=>{ const yy=46+i*26;
+    s+=`<rect x="180" y="${yy}" width="12" height="12" rx="3" fill="${p.color}"></rect>`;
+    s+=`<text x="198" y="${yy+11}" font-size="12.5" fill="#333">${esc(p.label)} · ${fmt(p.value)}（${Math.round(p.value/total*100)}%）</text>`;
+  });
+  s+=`</svg>`; el.innerHTML=s;
+}
+function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function aggSum(rows,keyFn,valFn){const m=new Map();rows.forEach(r=>{const k=keyFn(r);m.set(k,(m.get(k)||0)+valFn(r));});return m;}
+function kpi(el,items){el.innerHTML=items.map(i=>`<div class="kpi ${i.cls||''}"><div class="label">${i.label}</div><div class="val">${i.val}<span class="unit">${i.unit||''}</span></div></div>`).join('');}
+
+/* sortable table */
+function makeTable(tblEl, cols, rows, state){
+  function render(){
+    let r=[...rows];
+    if(state.sort){const c=cols[state.sort.i];r.sort((a,b)=>{let x=c.get(a),y=c.get(b);if(c.num){x=num(x);y=num(y);}else{x=String(x);y=String(y);}return (x>y?1:x<y?-1:0)*state.sort.dir;});}
+    let head=`<thead><tr>`+cols.map((c,i)=>`<th class="${c.num?'num':''}" data-i="${i}">${c.t}${state.sort&&state.sort.i===i?(state.sort.dir>0?' ▲':' ▼'):''}</th>`).join('')+`</tr></thead>`;
+    let body=`<tbody>`+r.map(row=>`<tr>`+cols.map(c=>`<td class="${c.num?'num':''}">${c.render?c.render(c.get(row),row):esc(c.get(row))}</td>`).join('')+`</tr>`).join('')+`</tbody>`;
+    tblEl.innerHTML=head+body;
+    tblEl.querySelectorAll('th').forEach(th=>th.onclick=()=>{const i=+th.dataset.i;state.sort=state.sort&&state.sort.i===i?{i,dir:-state.sort.dir}:{i,dir:1};render();});
+    if(state.onCount)state.onCount(r.length);
+  }
+  render();
+}
+
+/* ================= 業績日報 ================= */
+(function(){
+  const P=D.production;
+  const totQ=P.reduce((a,r)=>a+num(r.qty),0), totS=P.reduce((a,r)=>a+num(r.scrap),0);
+  const avgY=P.filter(r=>num(r.yield)>0).reduce((a,r,_,arr)=>a+num(r.yield)/arr.length,0);
+  kpi($('#perfKpis'),[
+    {label:'期間總入庫量',val:fmt(totQ),unit:'pcs',cls:''},
+    {label:'入庫筆數',val:fmt(P.length),unit:'筆',cls:'alt'},
+    {label:'平均良率',val:fmt1(avgY),unit:'%',cls:'g'},
+    {label:'總報廢量',val:fmt(totS),unit:'pcs',cls:'r'},
+  ]);
+  // monthly trend
+  const m=aggSum(P,r=>ym(r.date),r=>num(r.qty));
+  const months=[...m.keys()].filter(k=>k!=='—').sort();
+  lineChart($('#perfTrend'),months.map(k=>({label:k,value:m.get(k)})));
+  // top items
+  const it=aggSum(P,r=>r.item,r=>num(r.qty));
+  const top=[...it.entries()].sort((a,b)=>b[1]-a[1]).slice(0,10).map(e=>({label:e[0],value:e[1]}));
+  barChart($('#perfTop'),top,{lblW:165});
+  // month filter
+  const sel=$('#perfMonth');sel.innerHTML='<option value="">全部月份</option>'+months.map(k=>`<option>${k}</option>`).join('');
+  const cols=[
+    {t:'入庫日期',get:r=>dlabel(r.date)},
+    {t:'製令',get:r=>r.wo},
+    {t:'品號',get:r=>r.item},
+    {t:'品名',get:r=>r.name},
+    {t:'入庫量',get:r=>r.qty,num:1,render:v=>fmt(num(v))},
+    {t:'報廢',get:r=>r.scrap,num:1,render:v=>fmt(num(v))},
+    {t:'良率%',get:r=>r.yield,num:1,render:v=>num(v)?fmt1(num(v)):'—'},
+  ];
+  const st={sort:{i:0,dir:-1},onCount:n=>$('#perfCount').textContent=`共 ${n} 筆`};
+  function refresh(){
+    let rows=P.slice();
+    const mo=sel.value, q=$('#perfSearch').value.trim().toLowerCase();
+    if(mo)rows=rows.filter(r=>ym(r.date)===mo);
+    if(q)rows=rows.filter(r=>(r.item+r.name+r.wo).toLowerCase().includes(q));
+    makeTable($('#perfTbl'),cols,rows,st);
+  }
+  sel.onchange=refresh;$('#perfSearch').oninput=refresh;refresh();
+})();
+
+/* ================= 庫存／在製 ================= */
+(function(){
+  const W=D.workorders.map(r=>({...r,plan:num(r.planQty),done:num(r.doneQty),wip:Math.max(0,num(r.planQty)-num(r.doneQty)),scr:num(r.scrap)}));
+  const tPlan=W.reduce((a,r)=>a+r.plan,0),tDone=W.reduce((a,r)=>a+r.done,0),tWip=W.reduce((a,r)=>a+r.wip,0);
+  kpi($('#stockKpis'),[
+    {label:'製令總數',val:fmt(W.length),unit:'張',cls:'k'},
+    {label:'總預計產量',val:fmt(tPlan),unit:'pcs'},
+    {label:'總已生產',val:fmt(tDone),unit:'pcs',cls:'g'},
+    {label:'總在製 WIP',val:fmt(tWip),unit:'pcs',cls:'alt'},
+  ]);
+  // grouped bars by item
+  const byItem=new Map();
+  W.forEach(r=>{const k=r.item||'(空)';const o=byItem.get(k)||{label:k,plan:0,done:0,wip:0};o.plan+=r.plan;o.done+=r.done;o.wip+=r.wip;byItem.set(k,o);});
+  const gb=[...byItem.values()].sort((a,b)=>b.plan-a.plan).slice(0,10);
+  groupedBars($('#stockBars'),gb);
+  // donut status
+  const done=W.filter(r=>r.wip<=0).length, open=W.length-done;
+  donut($('#stockDonut'),[{label:'已完成',value:done,color:'#3aa76d'},{label:'在製中',value:open,color:'#f5821f'}]);
+  // table
+  const cols=[
+    {t:'製令',get:r=>r.wo},
+    {t:'開單日',get:r=>dlabel(r.date)},
+    {t:'品號',get:r=>r.item},
+    {t:'品名',get:r=>r.name},
+    {t:'預計',get:r=>r.plan,num:1,render:v=>fmt(v)},
+    {t:'已產',get:r=>r.done,num:1,render:v=>fmt(v)},
+    {t:'在製',get:r=>r.wip,num:1,render:v=>fmt(v)},
+    {t:'狀態',get:r=>r.wip>0?'在製':'完成',render:(v)=>`<span class="badge ${v==='完成'?'ok':'wait'}">${v}</span>`},
+  ];
+  const st={sort:{i:6,dir:-1},onCount:n=>$('#stockCount').textContent=`共 ${n} 筆`};
+  function refresh(){
+    let rows=W.slice();
+    if($('#stockStatus').value==='open')rows=rows.filter(r=>r.wip>0);
+    const q=$('#stockSearch').value.trim().toLowerCase();
+    if(q)rows=rows.filter(r=>(r.wo+r.item+r.name).toLowerCase().includes(q));
+    makeTable($('#stockTbl'),cols,rows,st);
+  }
+  $('#stockStatus').onchange=refresh;$('#stockSearch').oninput=refresh;refresh();
+})();
+
+/* ================= 進貨量 ================= */
+(function(){
+  const I=D.incoming;
+  const totQ=I.reduce((a,r)=>a+num(r.qty),0);
+  const vendors=new Set(I.map(r=>r.vendor)), items=new Set(I.map(r=>r.item));
+  kpi($('#incKpis'),[
+    {label:'進貨總量',val:fmt(totQ),unit:'pcs'},
+    {label:'進貨筆數',val:fmt(I.length),unit:'筆',cls:'alt'},
+    {label:'加工廠商數',val:fmt(vendors.size),unit:'家',cls:'k'},
+    {label:'品號數',val:fmt(items.size),unit:'項',cls:'g'},
+  ]);
+  const v=aggSum(I,r=>'廠商 '+r.vendor,r=>num(r.qty));
+  barChart($('#incVendor'),[...v.entries()].sort((a,b)=>b[1]-a[1]).map(e=>({label:e[0],value:e[1]})),{lblW:110,color:'#2c8c99'});
+  const m=aggSum(I,r=>ym(r.date),r=>num(r.qty));
+  const months=[...m.keys()].filter(k=>k!=='—').sort();
+  lineChart($('#incTrend'),months.map(k=>({label:k,value:m.get(k)})));
+  const cols=[
+    {t:'進貨日期',get:r=>dlabel(r.date)},
+    {t:'加工廠商',get:r=>r.vendor},
+    {t:'品號',get:r=>r.item},
+    {t:'品名',get:r=>r.name},
+    {t:'製令',get:r=>r.wo},
+    {t:'進貨量',get:r=>r.qty,num:1,render:v=>fmt(num(v))},
+  ];
+  const st={sort:{i:0,dir:-1},onCount:n=>$('#incCount').textContent=`共 ${n} 筆`};
+  function refresh(){
+    let rows=I.slice();const q=$('#incSearch').value.trim().toLowerCase();
+    if(q)rows=rows.filter(r=>(r.vendor+r.item+r.name).toLowerCase().includes(q));
+    makeTable($('#incTbl'),cols,rows,st);
+  }
+  $('#incSearch').oninput=refresh;refresh();
+})();
+</script>
+</body>
+</html>
