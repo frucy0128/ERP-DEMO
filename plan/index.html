@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>萬久平先進包裝｜2026 公司營運規劃書</title>
+<style>
+  :root{
+    --ink:#1f2226; --ink-2:#5c6066; --hair:#e3e6e9; --bg:#ffffff; --bg-2:#fafbfc; --bg-3:#f3f5f7;
+    --orange:#f5821f; --orange-d:#d96e10; --orange-soft:#fff4e8; --steel:#23272e;
+    --mono:ui-monospace,"SFMono-Regular",Consolas,monospace;
+    --sans:"Inter","Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;
+    --W:1280px; --H:720px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--sans);color:var(--ink);background:#eef1f4}
+  .eyebrow{font-family:var(--mono);font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--orange-d);font-weight:600}
+  h1,h2,h3{letter-spacing:-.01em;line-height:1.18;font-weight:800}
+
+  /* ---- stage / deck ---- */
+  .stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden}
+  .deck{position:relative;width:var(--W);height:var(--H);transform:scale(var(--s,1));transform-origin:center;box-shadow:0 30px 80px -30px rgba(20,30,40,.5)}
+  .slide{position:absolute;inset:0;background:var(--bg);padding:70px 76px;display:flex;flex-direction:column;opacity:0;visibility:hidden;transition:opacity .35s ease}
+  .slide.active{opacity:1;visibility:visible}
+  /* fine precision grid backdrop */
+  .slide.grid::before{content:"";position:absolute;inset:0;background:
+     repeating-linear-gradient(0deg,transparent,transparent 47px,#f4f6f8 47px,#f4f6f8 48px),
+     repeating-linear-gradient(90deg,transparent,transparent 47px,#f4f6f8 47px,#f4f6f8 48px);pointer-events:none}
+  .slide > *{position:relative}
+
+  /* slide chrome: top brand + bottom footer */
+  .s-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:30px}
+  .logo{font-weight:900;font-size:22px;letter-spacing:.5px}
+  .logo .j{color:var(--orange)} .logo .r{font-size:9px;vertical-align:super;color:#9aa1a8}
+  .s-top .k())(){}
+  .s-foot{position:absolute;left:76px;right:76px;bottom:34px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;color:#a7aeb5;letter-spacing:.05em}
+  .s-foot .line{flex:1;height:1px;background:var(--hair);margin:0 16px}
+
+  h2.title{font-size:38px;margin:6px 0 6px}
+  .rule{width:54px;height:4px;background:var(--orange);margin:14px 0 26px}
+  .lead{color:var(--ink-2);font-size:17px;max-width:760px;line-height:1.6}
+
+  /* ===== cover ===== */
+  .cover{background:linear-gradient(180deg,#fff 0%,#fafbfc 100%)}
+  .cover .big{font-size:64px;line-height:1.05;margin:8px 0 18px}
+  .cover .big .o{color:var(--orange)}
+  .cover .sub{font-size:20px;color:var(--ink-2);font-weight:600}
+  .cover .meta{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;font-family:var(--mono);font-size:13px;color:#8b929a;letter-spacing:.05em}
+  .cover .tagline{font-family:var(--mono);color:var(--orange-d);letter-spacing:.18em;font-size:14px}
+
+  /* ===== agenda ===== */
+  .agenda{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:6px}
+  .agenda .it{display:flex;gap:18px;align-items:center;border:1px solid var(--hair);border-radius:3px;padding:20px 22px;background:#fff}
+  .agenda .it .n{font-family:var(--mono);font-size:22px;font-weight:800;color:var(--orange);min-width:42px}
+  .agenda .it h3{font-size:19px}.agenda .it p{font-size:13px;color:var(--ink-2)}
+
+  /* ===== KPI tiles ===== */
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--hair);border:1px solid var(--hair);margin:4px 0 18px}
+  .kpis>div{background:#fff;padding:24px 18px}
+  .kpis .v{font-size:34px;font-weight:900;letter-spacing:-.02em}
+  .kpis .v .u{color:var(--orange);font-size:18px;margin-left:1px}
+  .kpis .k{font-family:var(--mono);font-size:11px;color:#8b929a;letter-spacing:.06em;margin-top:4px}
+  .src{font-family:var(--mono);font-size:11px;color:#a7aeb5}
+  .twocol{display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center;flex:1}
+  .barline{display:grid;gap:15px}
+  .barline .t{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-2);margin-bottom:6px}
+  .barline .track{height:8px;background:var(--bg-3);border-radius:20px;overflow:hidden}
+  .barline .fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--orange-d));border-radius:20px}
+
+  /* ===== generic cards ===== */
+  .cards4{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;flex:1;align-content:center}
+  .pcard{border:1px solid var(--hair);border-radius:3px;padding:24px 26px;background:#fff;display:flex;gap:18px}
+  .pcard .n{font-family:var(--mono);font-size:14px;color:var(--orange);border:1px solid var(--hair);width:40px;height:40px;display:grid;place-items:center;border-radius:50%;flex:0 0 40px;font-weight:700}
+  .pcard h3{font-size:19px;margin-bottom:6px}.pcard p{font-size:13.5px;color:var(--ink-2);line-height:1.55}
+
+  /* ===== tables ===== */
+  table{width:100%;border-collapse:collapse;font-size:15px;margin-top:6px}
+  th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--hair)}
+  thead th{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#8b929a;border-bottom:2px solid var(--hair)}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+  .arrow{color:var(--orange-d);font-weight:800}
+  .tag{display:inline-block;font-size:12px;font-family:var(--mono);padding:2px 9px;border-radius:2px;background:var(--orange-soft);color:var(--orange-d)}
+
+  /* ===== roadmap ===== */
+  .road{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--hair);border:1px solid var(--hair);flex:1;align-content:stretch;margin-top:6px}
+  .road .q{background:#fff;padding:22px 20px;display:flex;flex-direction:column}
+  .road .q .qh{font-family:var(--mono);color:var(--orange);font-size:13px;margin-bottom:14px;font-weight:700}
+  .road .q ul{list-style:none;display:grid;gap:10px}
+  .road .q li{font-size:13.5px;color:var(--ink-2);padding-left:16px;position:relative}
+  .road .q li::before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;background:var(--orange);transform:rotate(45deg)}
+
+  /* ===== closing ===== */
+  .closing{background:linear-gradient(180deg,#23272e,#171a1f);color:#fff}
+  .closing .eyebrow{color:var(--orange)}
+  .closing h2{font-size:46px;color:#fff;max-width:820px}
+  .closing .lead{color:#aeb6c0;font-size:18px}
+  .closing .logo{color:#fff}
+  .closing .s-foot{color:#6b7480}.closing .s-foot .line{background:rgba(255,255,255,.12)}
+
+  /* ===== controls ===== */
+  .controls{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;background:rgba(31,34,38,.9);backdrop-filter:blur(8px);padding:9px 16px;border-radius:40px;z-index:100}
+  .controls button{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;width:30px;height:30px;border-radius:50%;display:grid;place-items:center}
+  .controls button:hover{background:rgba(255,255,255,.15)}
+  .controls .pg{font-family:var(--mono);font-size:13px;color:#cbd2d9;min-width:54px;text-align:center}
+  .hint{position:fixed;top:16px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:12px;color:#8b929a;z-index:100}
+
+  /* ===== PRINT → one slide per page ===== */
+  @page{ size:1280px 720px; margin:0; }
+  @media print{
+    body{background:#fff}
+    .stage{position:static;display:block;overflow:visible}
+    .deck{position:static;width:1280px;height:auto;transform:none;box-shadow:none}
+    .slide{position:relative;inset:auto;opacity:1!important;visibility:visible!important;width:1280px;height:720px;page-break-after:always;break-after:page}
+    .slide:last-child{page-break-after:auto}
+    .controls,.hint{display:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="hint">← → 翻頁 ·  空白鍵下一頁  ·  F 全螢幕</div>
+<div class="stage">
+  <div class="deck" id="deck">
+
+    <!-- 1 COVER -->
+    <section class="slide cover active">
+      <div class="s-top"><span class="logo">W<span class="j">J</span>P<span class="r">&reg;</span></span><span class="tagline">PACKAGING FOR THE WORLD</span></div>
+      <div style="margin-top:60px">
+        <span class="eyebrow">Operations Plan · 2026</span>
+        <div class="big">公司<span class="o">營運</span><br>規劃書</div>
+        <div class="sub">萬久平先進包裝股份有限公司</div>
+        <div class="sub" style="font-size:15px;color:#9aa1a8;font-weight:500">WJP Advanced Packaging Co., Ltd.</div>
+      </div>
+      <div class="meta">
+        <span>精密包裝製造 · 數位化營運</span>
+        <span>2026 / CONFIDENTIAL</span>
+      </div>
+    </section>
+
+    <!-- 2 AGENDA -->
+    <section class="slide grid">
+      <div class="s-top"><span class="logo">W<span class="j">J</span>P</span><span class="eyebrow">Agenda</span></div>
+      <h2 class="title">內容綱要</h2><div class="rule"></div>
+      <div class="agenda">
+        <div class="it"><span class="n">01</span><div><h3>公司定位與願景</h3><p>我們是誰、要往哪裡去</p></div></div>
+        <div class="it"><span class="n">02</span><div><h3>營運現況快照</h3><p>ERP 製造數據實況</p></div></div>
+        <div class="it"><span class="n">03</span><div><h3>市場機會與定位</h3><p>需求趨勢與目標市場</p></div></div>
+        <div class="it"><span class="n">04</span><div><h3>營運策略四主軸</h3><p>達成目標的關鍵路徑</p></div></div>
+        <div class="it"><span class="n">05</span><div><h3>2026 營運目標 KPI</h3><p>可量化的年度承諾</p></div></div>
+        <div class="it"><span class="n">06</span><div><h3>行動計劃 · 風險對策</h3><p>時程、資源與風險管理</p></div></div>
+      </div>
+      <div class="s-foot"><span>萬久平先進包裝</span><span class="line"></span><span>02</span></div>
+    </section>
+
+    <!-- 3 POSITIONING & VISION -->
+    <section class="slide grid">
+      <div class="s-top"><span class="logo">W<span class="j">J</span>P</span><span class="eyebrow">01 · Positioning</span></div>
+      <h2 class="title">公司定位與願景</h2><div class="rule"></div>
+      <div class="twocol">
+        <div>
+          <p class="lead">萬久平是以<strong>精密製造</strong>為核心的包裝生產工廠。我們將「包裝」重新定義為對<strong>精度、潔淨與一致性</strong>的承諾，以數位化營運交付世界級品質。</p>
+          <div style="margin-top:26px;display:grid;gap:16px">
+            <div><span class="tag">願景 Vision</span><p style="font-size:16px;margin-top:8px">成為全球精密包裝與零件的首選製造夥伴。</p></div>
+            <div><span class="tag">使命 Mission</span><p style="font-size:16px;margin-top:8px">以制度化品質與彈性產能，讓每一批交付都可被驗證、可被信賴。</p></div>
+          </div>
+        </div>
+        <div class="cards4" style="grid-template-columns:1fr">
+          <div class="pcard"><span class="n">精</span><div><h3>精度</h3><p>公差可達 ±0.01mm 的穩定一致。</p></div></div>
+          <div class="pcard"><span class="n">淨</span><div><h3>潔淨</h3><p>制度化品管與潔淨製程環境。</p></div></div>
+          <div class="pcard"><span class="n">準</span><div><h3>準時</h3><p>數位化排程，交期可視可控。</p></div></div>
+        </div>
+      </div>
+      <div class="s-foot"><span>萬久平先進包裝</span><span class="line"></span><span>03</span></div>
+    </section>
+
+    <!-- 4 CURRENT OPERATIONS (ERP) -->
+    <section class="slide">
+      <div class="s-top"><span class="logo">W<span class="j">J</span>P</span><span class="eyebrow">02 · Current State</span></div>
+      <h2 class="title">營運現況快照</h2><div class="rule"></div>
+      <div class="kpis">
+        <div><div class="v">252<span class="u">K</span></div><div class="k">期間總產出 pcs</div></div>
+        <div><div class="v">97.6<span class="u">%</span></div><div class="k">平均生產良率</div></div>
+        <div><div class="v">348</div><div class="k">製令張數</div></div>
+        <div><div class="v">9.7<span class="u">K</span></div><div class="k">在製 WIP pcs</div></div>
+        <div><div class="v">20<span class="u">+</span></div><div class="k">託外進貨批次</div></div>
+      </div>
+      <p class="src">資料來源：ERP 製造模組（製令 OQCTA／生產入庫 OQCTF·G／託外進貨 OQCTH·I）· 期間 2024-07 ~ 2026-03</p>
+      <div class="twocol" style="margin-top:8px">
+        <div class="barline">
+          <div><div class="t"><span>精密零件加工</span><span>95%</span></div><div class="track"><div class="fill" style="width:95%"></div></div></div>
+          <div><div class="t"><span>客製化包裝量產</span><span>90%</span></div><div class="track"><div class="fill" style="width:90%"></div></div></div>
+          <div><div class="t"><span>品質管理 QC</span><span>97%</span></div><div class="track"><div class="fill" style="width:97%"></div></div></div>
+          <div><div class="t"><span>準時交期 OTD</span><span>93%</span></div><div class="track"><div class="fill" style="width:93%"></div></div></div>
+        </div>
+        <div>
+          <h3 style="font-size:17px;margin-bottom:10px">解讀</h3>
+          <p class="lead" style="font-size:15px">良率已達 97.6% 的高水準；在製 WIP 仍有 9.7K pcs，顯示<strong>排程與週轉</strong>具備優化空間。數位化數據已可即時追蹤，為下一步精進奠定基礎。</p>
+        </div>
+      </div>
+      <div class="s-foot"><span>萬久平先進包裝</span><span class="line"></span><span>04</span></div>
+    </section>
+
+    <!-- 5 MARKET -->
+    <section class="slide grid">
+      <div class="s-top"><span class="logo">W<span class="j">J</span>P</span><span class="eyebrow">03 · Market</span></div>
+      <h2 class="title">市場機會與定位</h2><div class="rule"></div>
+      <p class="lead">連接器、半導體封測與精密電子的成長，帶動高精度零件與客製包裝需求。萬久平鎖定<strong>高精度、小批量多樣、品質敏感</strong>的利基市場。</p>
+      <div class="cards4" style="margin-top:22px">
+        <div class="pcard"><span class="n">A</span><div><h3>連接器與測試</h3><p>CONTACT PIN、探針等高插拔、高導電應用。</p></div></div>
+        <div class="pcard"><span class="n">B</span><div><h3>半導體封測週邊</h3><p>潔淨、防靜電之精密載具與零件。</p></div></div>
+        <div class="pcard"><span class="n">C</span><div><h3>精密電子零組件</h3><p>微米級公差車削件，批量一致性高。</p></div></div>
+        <div class="pcard"><span class="n">D</span><div><h3>客製化工業包裝</h3><p>防撞防靜電設計，保護高價值產品。</p></div></div>
+      </div>
+      <div class="s-foot"><span>萬久平先進包裝</span><span class="line"></span><span>05</span></div>
+    </section>
+
+    <!-- 6 STRATEGY -->
+    <section class="slide grid">
+      <div class="s-top"><span class="logo">W<span class="j">J</span>P</span><span class="eyebrow">04 · Strategy</span></div>
+      <h2 class="title">營運策略四主軸</h2><div class="rule"></div>
+      <div class="cards4">
+        <div class="pcard"><span class="n">01</span><div><h3>精度與良率精進</h3><p>導入 SPC 製程管制與防呆，將良率自 97.6% 推升至 99%。</p></div></div>
+        <div class="pcard"><span class="n">02</span><div><h3>數位化製造深化</h3><p>串接 ERP 製令／報工／MRP 與儀表板，達成即時決策。</p></div></div>
+        <div class="pcard"><span class="n">03</span><div><h3>產能與週轉優化</h3><p>縮短在製 WIP 與前置時間，提升準時交期至 97%。</p></div></div>
+        <div class="pcard"><span class="n">04</span><div><h3>全球交付與夥伴</h3><p>擴大協力加工網絡，強化海外客戶服務與彈性產能。</p></div></div>
+      </div>
+      <div class="s-foot"><span>萬久平先進包裝</span><span class="line"></span><span>06</span></div>
+    </section>
+
+    <!-- 7 KPI TARGETS -->
+    <section class="slide">
+      <div class="s-top"><span class="logo">W<span class="j">J</span>P</span><span class="eyebrow">05 · Targets</span></div>
+      <h2 class="title">2026 營運目標 KPI</h2><div class="rule"></div>
+      <table>
+        <thead><tr><th>指標</th><th>現況</th><th>2026 目標</th><th>策略對應</th></tr></thead>
+        <tbody>
+          <tr><td>生產良率</td><td class="num">97.6%</td><td class="num">99.0% <span class="arrow">▲</span></td><td>主軸 01 · SPC 製程管制</td></tr>
+          <tr><td>準時交期 OTD</td><td class="num">93%</td><td class="num">97% <span class="arrow">▲</span></td><td>主軸 03 · 週轉優化</td></tr>
+          <tr><td>在製 WIP</td><td class="num">9.7K</td><td class="num">6.5K <span class="arrow">▼</span></td><td>主軸 03 · 排程精進</td></tr>
+          <tr><td>月產能</td><td class="num">基準</td><td class="num">+30% <span class="arrow">▲</span></td><td>主軸 02·04 · 數位化＋夥伴</td></tr>
+          <tr><td>客戶數（活躍）</td><td class="num">基準</td><td class="num">+25% <span class="arrow">▲</span></td><td>主軸 04 · 全球交付</td></tr>
+        </tbody>
+      </table>
+      <p class="src" style="margin-top:14px">「現況」取自 ERP 製造模組實際數據；「目標」為 2026 年度承諾值。</p>
+      <div class="s-foot"><span>萬久平先進包裝</span><span class="line"></span><span>07</span></div>
+    </section>
+
+    <!-- 8 ROADMAP -->
+    <section class="slide grid">
+      <div class="s-top"><span class="logo">W<span class="j">J</span>P</span><span class="eyebrow">06 · Roadmap</span></div>
+      <h2 class="title">行動計劃時程</h2><div class="rule"></div>
+      <div class="road">
+        <div class="q"><div class="qh">Q1</div><ul><li>建立 SPC 製程管制看板</li><li>ERP 儀表板上線推廣</li><li>盤點 WIP 與瓶頸站</li></ul></div>
+        <div class="q"><div class="qh">Q2</div><ul><li>關鍵製程防呆導入</li><li>排程規則優化試行</li><li>協力廠評鑑與擴充</li></ul></div>
+        <div class="q"><div class="qh">Q3</div><ul><li>良率改善專案驗收</li><li>產能擴充設備到位</li><li>海外客戶開發啟動</li></ul></div>
+        <div class="q"><div class="qh">Q4</div><ul><li>OTD 97% 達標檢核</li><li>全年 KPI 結算</li><li>2027 規劃滾動</li></ul></div>
+      </div>
+      <div class="s-foot"><span>萬久平先進包裝</span><span class="line"></span><span>08</span></div>
+    </section>
+
+    <!-- 9 RISK -->
+    <section class="slide">
+      <div class="s-top"><span class="logo">W<span class="j">J</span>P</span><span class="eyebrow">06 · Risk</span></div>
+      <h2 class="title">風險管理與對策</h2><div class="rule"></div>
+      <table>
+        <thead><tr><th>風險項目</th><th>影響</th><th>因應對策</th></tr></thead>
+        <tbody>
+          <tr><td>原物料價格波動</td><td><span class="tag">中</span></td><td>多源採購、長約鎖價、替代料驗證</td></tr>
+          <tr><td>關鍵人力／技術依賴</td><td><span class="tag">中</span></td><td>標準作業書面化、交叉訓練、知識留存</td></tr>
+          <tr><td>產能瓶頸與交期延誤</td><td><span class="tag">高</span></td><td>協力夥伴彈性產能、排程數位化監控</td></tr>
+          <tr><td>品質異常／客訴</td><td><span class="tag">高</span></td><td>三段品管、SPC 預警、全程追溯</td></tr>
+          <tr><td>客戶集中度</td><td><span class="tag">中</span></td><td>分散市場、開發新應用與海外客戶</td></tr>
+        </tbody>
+      </table>
+      <div class="s-foot"><span>萬久平先進包裝</span><span class="line"></span><span>09</span></div>
+    </section>
+
+    <!-- 10 CLOSING -->
+    <section class="slide closing">
+      <div class="s-top"><span class="logo">W<span class="j">J</span>P<span class="r">&reg;</span></span><span class="eyebrow">Thank You</span></div>
+      <div style="margin-top:auto;margin-bottom:auto">
+        <span class="eyebrow">2026 起步</span>
+        <h2 style="margin:16px 0 18px">以精密與制度，<br>包裝可被信賴的未來。</h2>
+        <p class="lead">數據已就緒，方向已清晰。萬久平將以四大策略主軸，邁向 99% 良率與全球交付的下一階段。</p>
+      </div>
+      <div class="s-foot"><span>WJP Advanced Packaging</span><span class="line"></span><span>Packaging for the World</span></div>
+    </section>
+
+  </div>
+</div>
+
+<div class="controls">
+  <button id="prev" aria-label="上一頁">‹</button>
+  <span class="pg"><span id="cur">1</span> / <span id="tot">10</span></span>
+  <button id="next" aria-label="下一頁">›</button>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0; const cur=document.getElementById('cur'), tot=document.getElementById('tot');
+  tot.textContent=slides.length;
+  function fit(){
+    const s=Math.min(window.innerWidth/1280, window.innerHeight/720)*0.94;
+    document.getElementById('deck').style.setProperty('--s', s);
+  }
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    cur.textContent=i+1;
+  }
+  document.getElementById('next').onclick=()=>show(i+1);
+  document.getElementById('prev').onclick=()=>show(i-1);
+  addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();show(i+1);}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();show(i-1);}
+    else if(e.key==='Home'){show(0);} else if(e.key==='End'){show(slides.length-1);}
+    else if(e.key.toLowerCase()==='f'){ if(!document.fullscreenElement)document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+  });
+  addEventListener('resize',fit); fit(); show(0);
+</script>
+</body>
+</html>
